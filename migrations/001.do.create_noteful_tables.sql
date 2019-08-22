@@ -8,7 +8,7 @@ create table noteful_notes (
     note_name text not null,
     content text,
     modified_date timestamp default now() not null,
-    folder_id integer --references noteful_folders(id) on delete cascade not null
+    folder_id integer not null --references noteful_folders(id) on delete cascade not null
 );
 
 alter table noteful_notes
