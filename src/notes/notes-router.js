@@ -26,8 +26,11 @@ notesRouter.route('/')
         const { note_name, content, modified_date, folder_id } = req.body;
         const newNote = { note_name, folder_id };
 
+        console.log(newNote);
         for (const [key, value] of Object.entries(newNote)) {
+            console.log(key, value);
             if(value == null) {
+                logger.error(`POST ${req.originalUrl} : Missing key ${key} in request body`);
                 return res.status(400).json({error: {message: `Missing key '${key}' in request body`}});
             };
         };
@@ -37,8 +40,7 @@ notesRouter.route('/')
 
         NotesService.insertNote(req.app.get('db'), serializeNote(newNote))
             .then(note => {
-                console.log(note);
-                res
+                return res
                     .status(201)
                     .location(path.posix.join(req.originalUrl + `/${note.id}`))
                     .json(note);
@@ -51,6 +53,7 @@ notesRouter.route('/:id')
         NotesService.getNoteById(req.app.get('db'), req.params.id)
             .then(note => {
                 if(!note) {
+                    logger.error(`ALL ${req.originalUrl} : Note with id ${req.params.id} does not exist`);
                     return res.status(404).json({error: {message: `Note does not exist`}});
                 };
 
@@ -75,6 +78,7 @@ notesRouter.route('/:id')
 
         const numberOfValues = Object.values(updatedNote).filter(Boolean).length;
         if(numberOfValues === 0) {
+            logger.error(`PATCH ${req.originalUrl} : Missing key in request body`);
             return res.status(400).json({error: {message: `Missing key 'note_name' or 'folder_id' from request body`}});
         };
 

@@ -4,6 +4,7 @@ const xss = require('xss');
 const FoldersService = require('./folders-service');
 const jsonParser = express.json();
 const foldersRouter = express.Router();
+const logger = require('../logger');
 
 const serializeFolder = folder => ({
     id: folder.id,
@@ -23,7 +24,7 @@ foldersRouter.route('/')
         const newFolder = { folder_name };
 
         if(newFolder.folder_name == null) {
-            console.log('IN IF...');
+            logger.error(`POST ${req.originalUrl} : Missing key 'folder_name' in request body`);
             return res.status(400).json({error: {message: `Missing key 'folder_name' in request body`}});
         };
 
@@ -42,6 +43,7 @@ foldersRouter.route('/:id')
         FoldersService.getFolderByID(req.app.get('db'), req.params.id)
             .then(folder => {
                 if(!folder) {
+                    logger.error(`ALL ${req.originalUrl} : Folder with id ${req.params.id} not found`);
                     return res.status(404).json({error: {message: `Folder does not exist`}});
                 };
                 res.folder = folder;
@@ -64,6 +66,7 @@ foldersRouter.route('/:id')
         const updatedFolder = { folder_name };
 
         if(updatedFolder.folder_name == null ) {
+            logger.error(`PATCH ${req.originalUrl} : Missing key in request body`);
             return res.status(400).json({error: {message: `Missing key 'folder_name' in request body`}});
         };
 
