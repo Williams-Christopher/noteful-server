@@ -1,10 +1,10 @@
 insert into noteful_folders
-(id, folder_name)
+(folder_name)
 values
-('1', 'Important'),
-('2', 'School'),
-('3', 'Work'),
-('4', 'Testing');
+('Important'),
+('School'),
+('Work'),
+('Testing');
 
 insert into noteful_notes
 (note_name, content, modified_date, folder_id)
