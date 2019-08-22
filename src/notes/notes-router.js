@@ -4,6 +4,7 @@ const xss = require('xss');
 const NotesService = require('./notes-service');
 const jsonParser = express.json();
 const notesRouter = express.Router();
+const logger = require('../logger');
 
 const serializeNote = note => ({
     id: note.id,
@@ -26,9 +27,7 @@ notesRouter.route('/')
         const { note_name, content, modified_date, folder_id } = req.body;
         const newNote = { note_name, folder_id };
 
-        console.log(newNote);
         for (const [key, value] of Object.entries(newNote)) {
-            console.log(key, value);
             if(value == null) {
                 logger.error(`POST ${req.originalUrl} : Missing key ${key} in request body`);
                 return res.status(400).json({error: {message: `Missing key '${key}' in request body`}});
